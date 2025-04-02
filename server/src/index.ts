@@ -1,16 +1,51 @@
-import express, { Express, Request, Response , Application } from 'express';
-import dotenv from 'dotenv';
+/**
+ * Libraries
+ */
+import express, { Application } from 'express';
+import cors, { CorsOptions } from 'cors';
+import { config as dotenvConfig } from "dotenv";
+import connectDB from './config/db';
 
-//For env File 
-dotenv.config();
+// Route imports
+import indexRouter from './routes/index';
 
+// Determine which .env file to load based on the environment
+const envFile: string = `.env.${process.env.NODE_ENV || "local"}`;
+dotenvConfig({ path: envFile });
+
+/**
+ * Variables
+ */
 const app: Application = express();
-const port = process.env.PORT || 8000;
+const PORT: number = Number(process.env.PORT || "8000");
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome to Express & TypeScript Server');
-});
+const corsOptions: CorsOptions = {
+  origin: true,
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 
-app.listen(port, () => {
-  console.log(`Server is Fire at http://localhost:${port}`);
-});
+/**
+ * Middlewares
+ */
+app.use(cors(corsOptions));
+app.use(express.json({ limit: "20mb", strict: false }));
+app.use(express.urlencoded({ extended: true }));
+
+/**
+ * Mount Index API Route
+ */
+app.use("/api/v1", indexRouter);
+
+/**
+ * Database & Server Connection
+ */
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is listening on port ${PORT}`);
+    });
+  })
+  .catch((error: Error) => {
+    console.error('Failed to connect to the database:', error.message);
+  });
