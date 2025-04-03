@@ -1,7 +1,7 @@
-import express, { Router } from "express";
+import { Router } from "express";
 import deckRoutes from "./deck.routes";
 
-const router: Router = express.Router();
+const router = Router();
 
 router.use("/deck", deckRoutes);
 

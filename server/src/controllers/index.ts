@@ -1,3 +1,1 @@
-import * as deckController from './deck.controller';
-
-export { deckController };
+export * as deckController from './deck.controller';

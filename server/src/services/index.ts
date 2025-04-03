@@ -1,3 +1,1 @@
-import * as deckServices from './deck.service';
-
-export { deckServices };
+export * as deckServices from './deck.service';
